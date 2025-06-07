@@ -1,0 +1,50 @@
+#### **¡Manos a la Obra con el Ejemplo!**
+
+1. **Asegúrate de tener todos los archivos** (los que te di en la respuesta anterior: `backend/index.js`, `backend/package.json`, `backend/Dockerfile` y `docker-compose.yml`) en sus respectivas ubicaciones dentro de la carpeta `mi-api-con-db`.
+
+2. **Abre tu terminal** y navega a la carpeta `mi-api-con-db`:
+
+```yaml
+cd mi-api-con-db
+ ```
+
+3. **Inicia tu aplicación completa:**
+
+```yaml
+docker-compose up -d
+```
+
+- Docker Compose leerá el `docker-compose.yml`.
+- Verá el servicio `backend` que necesita ser `build`-eado y lo hará.
+- Verá el servicio `db` que necesita la imagen `postgres:14-alpine` y la descargará si no la tienes.
+- Creará una red interna por defecto para tu proyecto.
+- Creará el volumen `db_data`.
+- Iniciará `db` y luego `backend` (gracias a `depends_on`).
+
+4. **Verifica los servicios corriendo:**
+
+```
+docker-compose ps
+```
+
+5. **Prueba la API (como antes):**
+
+- Navega a `http://localhost:3000` en tu navegador.
+- Usa `curl` o Postman para interactuar:
+
+```yaml
+curl http://localhost:3000/mensajes
+curl -X POST -H "Content-Type: application/json" -d '{"texto": "Un nuevo mensaje desde Compose!"}' http://localhost:3000/mensajes
+```
+
+6. **Detén y elimina los contenedores (manteniendo los datos):**
+
+```yaml
+docker-compose down
+```
+
+7. **Detén y elimina todo (incluyendo los datos):**
+
+```yaml
+docker-compose down --volumes
+```
