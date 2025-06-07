@@ -1,0 +1,33 @@
+version: '3.8' # Siempre especifica la versión
+
+services: # Aquí definimos todos los servicios de nuestra aplicación
+
+  # --- Servicio de Backend (API de Node.js) ---
+  backend:
+    build: ./backend # Le dice a Compose que busque un Dockerfile en la carpeta './backend'
+    ports:
+      - "3000:3000" # Mapea el puerto 3000 de tu máquina al puerto 3000 del contenedor 'backend'
+    environment: # Variables de entorno para el contenedor del backend
+      DB_HOST: db # El nombre del servicio de la base de datos es 'db' (ver más abajo)
+      DB_NAME: mydatabase
+      DB_USER: user
+      DB_PASSWORD: password
+      DB_PORT: 5432
+    depends_on: # El backend NO se iniciará hasta que el servicio 'db' esté listo
+      - db
+    volumes: # Muy útil para desarrollo: sincroniza el código local con el contenedor
+      - ./backend:/app # Cambios en tu 'index.js' local se reflejan al instante en el contenedor
+      - /app/node_modules # <-- ¡Añade esta línea! Crea un "named volume" anónimo para node_modules
+  # --- Servicio de Base de Datos (PostgreSQL) ---
+  db:
+    image: postgres:14-alpine # Usamos una imagen preconstruida de Docker Hub
+    environment: # Variables de entorno para configurar la base de datos PostgreSQL
+      POSTGRES_DB: mydatabase
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+    volumes: # **IMPORTANTE:** Persistencia de datos para la DB
+      - db_data:/var/lib/postgresql/data # Los datos de la DB se guardan en un volumen llamado 'db_data'
+
+# Definición de volúmenes (fuera de la sección 'services')
+volumes:
+  db_data: # Este es el volumen al que se refiere el servicio 'db'
